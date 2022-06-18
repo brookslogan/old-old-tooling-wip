@@ -1,0 +1,74 @@
+
+
+
+* Classes
+- caldate
+- calweek
+- calyear?
+- ..._with_shift? "season" bad for indicating is solar/tropical/orbital/sidereal year long
+- cal vs. sol vs. greg vs. ...
+- tzdate, ...
+- intervals?
+- ddays?
+- dweeks?
+- dyears?
+- week_convention? vs. starting.wday, owning.wday everywhere?
+
+* Functions
+- y,m,d -> caldate
+- y,w,wd, starting.wday, owning.wday (vs. week_convention) -> caldate
+- ... w/ seasons...
+- "%Y%m%d" -> caldate
+- ymdint -> caldate?
+- ywint, starting.wday, owning.wday, convention name (vs. week_convention) -> calweek
+- y,w -> calweek
+- ... -> calweek w/ mmwrweek convention
+- yint -> calyear?
+- (cal)date -> calweek
+- (cal)date -> calyear
+- (cal)date -> wday0
+- (cal)date -> wday7
+- (cal)week, wday0 -> caldate
+- (cal)week, wday7 -> caldate
+- (cal)week -> caldates
+- (cal)year -> calweeks
+- (cal)year, yday -> caldate/error
+- (cal)year -> caldates
+- (cal)year, yweek -> calweek/error
+- (cal)date -> ywwd
+- (cal)week -> yw
+- (cal)year -> #days
+- (cal)year, owning.wday -> #weeks
+- (cal)year, wday -> # of that wday (redundant with #weeks...)
+- ........
+- "seasons"
+- ........
+- `+` ...
+  * calweek + int perhaps dangerous... because if calweekasint + int input
+    instead, results in problems, and cannot prevent. require use of method like
+    add_calweek_int; add_weeks; calweek + dweeks/weeks/intervals/etc., where
+    latter arg is a special class? or try to warn if calweek+int is used in
+    package or in batch but not in interactive? or warn (first time) in
+    interactive as well?
+  * ...
+- `-`
+  * caldate - caldate... & synonyms for int forms? ... output: ddays vs. int?
+  * calweek - calweek
+- `%within%`? %contains%?
+  * caldate %within% calweek... & synonyms for int forms? date_within_week?
+  * caldate within calyear
+  * calweek within calyear
+  * ...
+- start/end_instant
+  * start/end_instant(tzdate)
+  * start/end_instant(tzweek)
+  * start/end_instant(tzyear)
+  * start/end_instant(caldate, tz)
+  * start/end_instant(calweek, tz)
+  * start/end_instant(calyear, tz)
+- end_instant
+- ........
+- print, toString, str, cat, as.character, ...
+- ........
+- ndays, nweeks, ...
+- ........

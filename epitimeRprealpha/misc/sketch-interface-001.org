@@ -1,0 +1,18 @@
+* Classes
+- caldate (vs. "greg")
+- calweek (yw, not w)
+- calyear
+- calmon
+- soldate (vs. "seasondate", "heldate", "shiftcaldate" (potent. mixup with tzdate))
+- solweek
+- solyear
+- tzdate/walldate? withtz? (is this too hard? maybe something like "shiftcaldate" requiring user to make the approximation... seems bad still)
+- quotient/product/dateparts/...?
+- (caldate w/ ywd/... caching?)
+- (months and years formed by weeks belonging to them rather than days?)
+- (hours, etc.?)
+* Functions
+* Notes
+- if get into tz stuff, using context to inform decisions around tz boundaries,
+  producing errors about ambiguities and requiring a listing of clarifications
+  and/or function handling ambiguities.

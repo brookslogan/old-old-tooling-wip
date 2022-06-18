@@ -1,0 +1,11 @@
+* Classes
+- calywdhm (no s maybe) / calywwdhm / ...
+- calymdhm
+- calymwdhm
+- quotient
+- with_shift / nudge (distinction between hour-shifts and week-shifts on
+  ywd-like? although starting from something including hours and using quotient
+  seems to make this just something that should be handled anyway... but nature
+  of naming changes might differ...)
+- caldate
+* Functions

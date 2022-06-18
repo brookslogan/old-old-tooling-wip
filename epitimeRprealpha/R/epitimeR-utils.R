@@ -1,0 +1,3 @@
+
+##' @importFrom pipeR %>>%
+`%pipeR>>%` = pipeR::`%>>%`
