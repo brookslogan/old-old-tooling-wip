@@ -13,26 +13,32 @@ methods::setOldClass("caldate")
 caldate.origin.Date = as.Date("1970-01-01")
 caldate.origin.Date.as.integer = as.integer(caldate.origin.Date)
 caldate.origin.POSIXlt = as.POSIXlt(caldate.origin.Date)
-caldate.origin.year = caldate.origin.POSIXlt[["year"]] + 1900L
-caldate.origin.wday0 = caldate.origin.POSIXlt[["wday"]]
+caldate.origin.year = caldate.origin.POSIXlt$year + 1900L
+caldate.origin.wday0 = caldate.origin.POSIXlt$wday
 
+#' @export
+caldate_of = function(obj, ...) UseMethod("caldate_of", obj)
+
+#' @export
 caldate_of.Date =
-    if (caldate.origin.Date.as.integer == 0L) {
-        function(obj, ...) {
-            `class<-`(
-                as.integer(obj),
-                "caldate"
-            )
-        }
-    } else {
+    ## if (caldate.origin.Date.as.integer == 0L) {
+    ##     function(obj, ...) {
+    ##         `class<-`(
+    ##             as.integer(obj),
+    ##             "caldate"
+    ##         )
+    ##     }
+    ## } else {
         function(obj, ...) {
             `class<-`(
                 as.integer(obj) - caldate.origin.Date.as.integer,
                 "caldate"
             )
         }
-    }
+    ## }
+#' @export
 caldate_of.caldate = function(obj, ...) obj
+#' @export
 caldate_of.default = function(obj, ...) {
     caldate_of(as.Date(obj, ...))
 }
@@ -50,15 +56,17 @@ caldate.origin.caldate = caldate_of(caldate.origin.Date)
 date.cycle.period = 365L*400L + 100L - 4L + 1L
 date.cycle.years.per.cycle = 400L
 date.cycle.dates = as.Date("1970-01-01") + seq_len(date.cycle.period) - 1L
-date.cycle.year.offset.pattern = as.POSIXlt(date.cycle.dates)[["year"]] %pipeR>>% {. - .[[1L]]}
-date.cycle.yday0.pattern = as.POSIXlt(date.cycle.dates)[["yday"]] %pipeR>>% {. - .[[1L]]}
-date.cycle.mon0.pattern = as.POSIXlt(date.cycle.dates)[["mon"]]
-date.cycle.mday1.pattern = as.POSIXlt(date.cycle.dates)[["mday"]]
+date.cycle.year.offset.pattern = as.POSIXlt(date.cycle.dates)$year %pipeR>>% {. - .[[1L]]}
+date.cycle.yday0.pattern = as.POSIXlt(date.cycle.dates)$yday %pipeR>>% {. - .[[1L]]}
+date.cycle.mon0.pattern = as.POSIXlt(date.cycle.dates)$mon
+date.cycle.mday1.pattern = as.POSIXlt(date.cycle.dates)$mday
 
+#' @export
 caldate_of_ymd_vecs = function(y,m,d) {
     ## todo speed up with tables?
     caldate_of(as.Date(paste0(y,"-",m,"-",d)))
 }
+#' @export
 caldate_of_ymd.integer = function(obj) {
     d = obj %% 100L
     ym = obj %/% 100L
@@ -66,6 +74,7 @@ caldate_of_ymd.integer = function(obj) {
     y = ym %/% 100L
     caldate_of_ymd_vecs(y,m,d)
 }
+#' @export
 caldate_of_ymd.numeric = function(obj) {
     if (!all(as.integer(obj) == obj)) {
         stop ('obj must not have fractional part')
@@ -74,14 +83,17 @@ caldate_of_ymd.numeric = function(obj) {
 }
 ## xxx below names vs. mon1, mday1?...
 ## xxx default keys being 1L, 2L, 3L?
+#' @export
 caldate_of_ymd.list = function(obj, y.key="year", m.key="mon", d.key="mday") {
     y = obj[[y.key]]
     m = obj[[m.key]]
     d = obj[[d.key]]
     caldate_of_ymd_vecs(y,m,d)
 }
+#' @export
 caldate_of_ymd.data.frame = caldate_of_ymd.list
 
+#' @export
 year_of.caldate = function(obj) {
     days.from.origin = unclass(obj)
     periods.from.origin = days.from.origin %/% date.cycle.period
@@ -91,33 +103,40 @@ year_of.caldate = function(obj) {
         date.cycle.year.offset.pattern[period.offset+1L]
 }
 
+#' @export
 yday0_of.caldate = function(obj) {
     days.from.origin = unclass(obj)
     period.offset = days.from.origin %% date.cycle.period
     date.cycle.yday0.pattern[period.offset+1L]
 }
+#' @export
 yday1_of.caldate = function(obj) {
     yday0_of(obj) + 1L
 }
 
+#' @export
 mon0_of.caldate = function(obj) {
     days.from.origin = unclass(obj)
     period.offset = days.from.origin %% date.cycle.period
     date.cycle.mon0.pattern[period.offset+1L]
 }
+#' @export
 mon1_of.caldate = function(obj) {
     mon0_of.caldate(obj) + 1L
 }
 
+#' @export
 mday1_of.caldate = function(obj) {
     days.from.origin = unclass(obj)
     period.offset = days.from.origin %% date.cycle.period
     date.cycle.mday1.pattern[period.offset+1L]
 }
+#' @export
 mday0_of.caldate = function(obj) {
     mday1_of.caldate(obj) - 1L
 }
 
+#' @export
 wday0_of.caldate = function(obj) {
     ## Note:
     ## * obj's wday0 is congruent to (unclassed obj + offset) mod 7
@@ -129,28 +148,34 @@ wday0_of.caldate = function(obj) {
     wday0 = (days.from.origin + caldate.origin.wday0) %% 7L
     wday0
 }
+#' @export
 wday1_of.caldate = function(obj) {
     wday0 = get_wday0.caldate(obj)
     wday7 = wday0 + 7L*(wday0==0L) # (implicit conversion from TRUE/FALSE to 1/0)
     wday7
 }
 
+#' @export
 n0_of_same_wday_in_year_up_to.caldate = function(obj) {
     yday0_of(obj) %/% 7L
 }
+#' @export
 n1_of_same_wday_in_year_up_to.caldate = function(obj) {
     ## xxx potential good use of an inlining function
     yday0_of(obj) %/% 7L + 1L
 }
 
+#' @export
 advance.caldate = function(obj, amt) UseMethod("advance.caldate", amt)
 
+#' @export
 advance.caldate.integer = function(obj, amt) {
     result = unclass(obj) + amt
     class(result) <- "caldate"
     result
 }
 
+#' @export
 advance.caldate.numeric = function(obj, amt) {
     amt.as.integer = as.integer(amt)
     if (!all(amt == amt.as.integer)) {
@@ -159,6 +184,7 @@ advance.caldate.numeric = function(obj, amt) {
     advance.caldate.integer(obj, amt.as.integer)
 }
 
+#' @export
 `+.caldate` = function(e1, e2) {
     ## This function assumes it is called via S3 dispatch or directly with object classes consistent with S3 dispatch.  However, S3 dispatch for Ops like `+` tries both args, so =e1= may not actually be a caldate as one might expect.  Additionally, =e2= might be missing if used as a unary operator.  Delegate to an `advance` method, ensuring that the first argument is a caldate.
     if (missing(e2)) {
@@ -172,12 +198,15 @@ advance.caldate.numeric = function(obj, amt) {
 }
 
 ## when updating, update inline versions:
+#' @export
 `ordered_dispatch_+.caldate` = function(e1, e2) UseMethod("ordered_dispatch_+.caldate", e2)
 
+#' @export
 `ordered_dispatch_+.caldate.default` = function(e1, e2) {
     UseMethod("advance.caldate", e2)
 }
 
+#' @export
 `-.caldate` = function(e1, e2) {
     ## This function assumes it is called via S3 dispatch or directly with object classes consistent with S3 dispatch.  However, S3 dispatch for Ops like `-` tries both args, so =e1= may not actually be a caldate as one might expect.  Additionally, e2 might be missing if used as a unary operator.  Delegate to an `advance` method, ensuring that the first argument is a caldate.
     if (missing(e2)) {
@@ -191,17 +220,21 @@ advance.caldate.numeric = function(obj, amt) {
 }
 
 ## when updating, update inline versions:
+#' @export
 `ordered_dispatch_-.caldate` = function(e1, e2) UseMethod("ordered_dispatch_-.caldate", e2)
 
+#' @export
 `ordered_dispatch_-.caldate.default` = function(e1, e2) {
     UseMethod("advance.caldate", -e2)
 }
 
+#' @export
 Ops.caldate = function(e1, e2) {
     ## xxx move + and - overrides here?
     stop ('Ops not supported for caldate yet.')
 }
 
+#' @export
 c.caldate = function(...) {
     if (!all(sapply(list(...), function(obj) is(obj, "caldate")))) {
         stop ('All arguments to =c.caldate= must be =caldate= objects.')
@@ -209,6 +242,7 @@ c.caldate = function(...) {
     `class<-`(NextMethod(), "caldate")
 }
 
+#' @export
 `[.caldate` = function(...) {
     `class<-`(NextMethod(), "caldate")
 }
@@ -228,14 +262,17 @@ as.Date.caldate =
         }
     }
 
+#' @export
 format.caldate = function(x, ...) {
     format.Date(as.Date(x, ...))
 }
 
+#' @export
 as.character.caldate = function(x, ...) {
     as.character.Date(as.Date.caldate(x, ...), ...)
 }
 
+#' @export
 print.caldate = function(x, ...) {
     cat('<caldate>:\n')
     print(as.character.caldate(x))
@@ -244,8 +281,10 @@ print.caldate = function(x, ...) {
 ## xxx "<caldate>" would be too long for frequent use in tibble headers; pillar_shaft recommends no more than 4 chars instead of the 7; but thinking of calweek and season model weeks etc., would probably want the longer form when printed outside, so may just have a different label for in tibbles
 
 ## fixme licensing?:
+#' @export
 as.data.frame.caldate = as.data.frame.Date
 
+#' @export
 rep.caldate = function(x, ...) {
     `class<-`(NextMethod(), "caldate")
 }

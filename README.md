@@ -3,7 +3,8 @@ This contains WIP on tooling packages I was eventually hoping to use to replace
 functionality in the ILI production forecasting system. The only progress made
 was toward some very basic utilities rather than something like epiprocess and
 epipredict. Something that did work was some faster-than-Date date calculations
-and some generalized week calculations. Some work appears to have been lost, and
+and some generalized week calculations, with a naming scheme on related
+functions to hint at possible values. Some work appears to have been lost, and
 some capitalization issue appears to have confused cloud syncing. Things that
 were in progress that I recall include:
 - trying to get these custom classes to render correctly inside tibbles and
@@ -34,3 +35,9 @@ were in progress that I recall include:
   compactly; some part of this has already been implemented in base R via
   ALTREPs. These would be useful in more cleanly/elegantly implementing caldate
   internals.
+
+There are/were some issues with running this on current versions of R (e.g.,
+POSIXlt objects no longer allowing use of double brackets to access information
+--- IIRC the cross-version-compatible accessor to use is `$` rather than `[[` or
+`[`, and getting S3 to work; these have now been hastily tackled in
+epitimeRprealpha).
